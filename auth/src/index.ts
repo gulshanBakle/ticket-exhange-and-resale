@@ -1,6 +1,7 @@
 import express from 'express';
 import 'express-async-errors'
 import {json} from 'body-parser'
+import mongoose from 'mongoose'
 import {currentUserRouter} from './routes/current-user'
 import {signinRouter} from './routes/signin'
 import {signoutRouter} from './routes/signout'
@@ -22,7 +23,21 @@ app.all('*', async (req, res) => {
     throw new RouteNotFoundError();
   });
 
-
-app.listen(PORT, ()=>{
+const start = async ()=>{
+  try{
+    await mongoose.connect('mongodb://auth-mongo-serv:27017',{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+  });
+  console.log('Connect to MongoDB!')
+  }
+  catch(err){
+    console.error(err)
+  }
+  app.listen(PORT, ()=>{
     console.log(`Listening to port ${PORT}. Hola!`)
 })
+}
+start();
+
